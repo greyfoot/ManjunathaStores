@@ -40,11 +40,14 @@ table {
     border-collapse: collapse;
 }
 
-table, th, td {
+table,
+th,
+td {
     border: 1px solid #ccc;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     text-align: center;
 }
@@ -60,10 +63,12 @@ th {
 /* Mobile-specific styles */
 @media screen and (max-width: 600px) {
     table {
-        font-size: 12px; /* Reduce font size for mobile */
+        font-size: 12px;
+        /* Reduce font size for mobile */
     }
 
-    th, td {
+    th,
+    td {
         padding: 5px;
     }
 
