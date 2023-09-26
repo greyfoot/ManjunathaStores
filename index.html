@@ -7,6 +7,8 @@
     <title>Manjunatha Stores</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
 </head>
 
 <body>
@@ -42,9 +44,12 @@
                     </tfoot>
                 </table>
             </div>
-            <button type="button" id="add-item">Add Item</button>
-            <button type="submit" id="generate-bill">Generate Bill</button>
+
         </form>
+        <div id="bill-buttons">
+            <button type="button" id="add-item">Add Item</button>
+            <button type="button" id="generate-bill">Generate Bill</button>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
