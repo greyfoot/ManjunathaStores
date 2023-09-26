@@ -103,21 +103,20 @@ function generateJPEG(event) {
     const date = document.getElementById("date").value;
     const name = document.getElementById("name").value;
 
-    // Capture the HTML content as an image using dom-to-image
+    // Capture the HTML content as an image using html2canvas
     const captureDiv = document.querySelector(".container");
 
-    domtoimage.toBlob(captureDiv).then(function (blob) {
-        // Create a URL for the blob
-        const blobUrl = URL.createObjectURL(blob);
+    html2canvas(captureDiv).then(function (canvas) {
+        // Convert the canvas to a data URL
+        const dataUrl = canvas.toDataURL("image/jpeg");
 
-        // Create an "a" element to trigger the download
+        // Create a link to download the image
         const link = document.createElement("a");
-        link.href = blobUrl;
+        link.href = dataUrl;
         link.download = `${name}_${date}.jpeg`;
-        link.click();
 
-        // Release the URL object to free up resources
-        URL.revokeObjectURL(blobUrl);
+        // Trigger a click event to download the image
+        link.click();
     });
 }
 
