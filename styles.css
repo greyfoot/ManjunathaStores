@@ -1,18 +1,43 @@
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
     text-align: center;
-    margin: 20px;
 }
 
 form {
-    margin: 20px auto;
-    width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.table-container {
+    overflow-x: auto;
 }
 
 table {
+    width: 100%;
     border-collapse: collapse;
-    width: 80%;
-    margin: 20px auto;
 }
 
 table, th, td {
@@ -20,17 +45,30 @@ table, th, td {
 }
 
 th, td {
-    padding: 8px;
+    padding: 10px;
+    text-align: center;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    cursor: pointer;
+th {
+    background-color: #f2f2f2;
 }
 
-button:hover {
-    background-color: #0056b3;
+.total-row {
+    font-weight: bold;
+}
+
+/* Mobile-specific styles */
+@media screen and (max-width: 600px) {
+    table {
+        font-size: 12px; /* Reduce font size for mobile */
+    }
+
+    th, td {
+        padding: 5px;
+    }
+
+    .quantity-cell,
+    .amount-cell {
+        display: table-cell;
+    }
 }
