@@ -1,51 +1,125 @@
-// Product details
-const products = {
-    Blue500: 22,
-    Orange500: 25,
-    Curd200: 12
-};
+// Sample JSON data (replace this with your actual data)
+const productsJson = [
+    { "name": "Nandini 500 ml", "mrp": 44 },
+    { "name": "Nandini 1000 ml", "mrp": 42 },
+    { "name": "Nandini Shubham", "mrp": 50 },
+    { "name": "Nandini Special", "mrp": 50 },
+    { "name": "Curd 200 g", "mrp": 12 },
+    { "name": "Curd 500 g", "mrp": 26 }
+];
 
-const billingForm = document.getElementById('billingForm');
-const billTable = document.getElementById('billTable');
-const downloadButton = document.getElementById('downloadButton');
+// Function to add a new row to the table
+function addTableRow() {
+    const row = document.createElement("tr");
+    const productCell = document.createElement("td");
+    const mrpCell = document.createElement("td");
+    const quantityCell = document.createElement("td");
+    const amountCell = document.createElement("td");
+    const removeButtonCell = document.createElement("td");
 
-let billData = [];
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.addEventListener("click", () => {
+        row.remove();
+        calculateTotalAmount();
+    });
 
-function calculateBill() {
-    const date = document.getElementById('date').value;
-    const name = document.getElementById('name').value;
-    const item = parseInt(document.getElementById('item').value);
+    quantityCell.innerHTML = '<input type="number" class="quantity" min="1" value="1">';
+    amountCell.textContent = "0.00";
+    amountCell.classList.add("amount");
 
-    // Calculate total for each product
-    const billDetails = [];
-    let totalAmount = 0;
+    // Populate the "Product" column with a dropdown of product names
+    const productSelect = document.createElement("select");
+    productsJson.forEach((product) => {
+        const option = document.createElement("option");
+        option.value = product.name;
+        option.text = product.name;
+        productSelect.appendChild(option);
+    });
+    productCell.appendChild(productSelect);
 
-    for (const productName in products) {
-        const productMRP = products[productName];
-        const total = productMRP * item;
-        totalAmount += total;
+    // Populate the "MRP" column with MRP values based on the selected product
+    productSelect.addEventListener("change", () => {
+        const selectedProductName = productSelect.value;
+        const selectedProduct = productsJson.find((product) => product.name === selectedProductName);
+        const selectedMRP = selectedProduct ? selectedProduct.mrp : 0;
+        mrpCell.textContent = selectedMRP.toFixed(2);
+        calculateAmount();
+    });
 
-        billDetails.push([productName, productMRP, item, total]);
+    // Trigger the initial calculation when the page loads
+    productSelect.dispatchEvent(new Event("change"));
+
+
+    // Calculate "Amount" based on "MRP" and "Quantity"
+    function calculateAmount() {
+        const selectedMRP = parseFloat(mrpCell.textContent);
+        const selectedQuantity = parseFloat(quantityCell.querySelector(".quantity").value);
+        const calculatedAmount = selectedMRP * selectedQuantity;
+        amountCell.textContent = calculatedAmount.toFixed(2);
+        calculateTotalAmount();
     }
 
-    // Display bill details
-    billData = billDetails;
+    // Add an event listener to the quantity input for live calculation
+    quantityCell.querySelector(".quantity").addEventListener("input", calculateAmount);
 
-    const billRows = billDetails.map(item => {
-        return `<tr><td>${item[0]}</td><td>${item[1]}</td><td>${item[2]}</td><td>${item[3]}</td></tr>`;
-    });
+    productCell.classList.add("product-cell");
+    mrpCell.classList.add("mrp-cell");
+    quantityCell.classList.add("quantity-cell");
+    amountCell.classList.add("amount-cell");
+    removeButtonCell.classList.add("remove-button-cell");
 
-    billTable.querySelector('tbody').innerHTML = billRows.join('');
-    downloadButton.style.display = 'block';
+    removeButtonCell.appendChild(removeButton);
+
+    row.appendChild(productCell);
+    row.appendChild(mrpCell);
+    row.appendChild(quantityCell);
+    row.appendChild(amountCell);
+    row.appendChild(removeButtonCell);
+
+    document.getElementById("bill-items").appendChild(row);
+
+    // Update the total amount when a new row is added
+    calculateTotalAmount();
 }
 
-downloadButton.addEventListener('click', () => {
-    const doc = new jsPDF();
-
-    doc.autoTable({
-        head: [['Product', 'MRP', 'Quantity', 'Total']],
-        body: billData
+// Function to calculate and update total amount
+function calculateTotalAmount() {
+    const amountElements = document.querySelectorAll(".amount");
+    let totalAmount = 0;
+    amountElements.forEach((element) => {
+        totalAmount += parseFloat(element.textContent);
     });
+    document.getElementById("total-amount").textContent = totalAmount.toFixed(2);
+}
 
-    doc.save('bill.pdf');
-});
+// Add item button click event
+document.getElementById("add-item").addEventListener("click", addTableRow);
+
+// Generate and download the JPEG image
+function generateJPEG(event) {
+    event.preventDefault(); // Prevent the form from submitting and resetting
+
+    const date = document.getElementById("date").value;
+    const name = document.getElementById("name").value;
+
+    // Capture the HTML content as an image using dom-to-image
+    const captureDiv = document.querySelector(".container");
+
+    domtoimage.toBlob(captureDiv).then(function (blob) {
+        // Create a URL for the blob
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Create an "a" element to trigger the download
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = `${name}_${date}.jpeg`;
+        link.click();
+
+        // Release the URL object to free up resources
+        URL.revokeObjectURL(blobUrl);
+    });
+}
+
+// Add event listener for the "Generate Bill" button
+document.getElementById("generate-bill").addEventListener("click", generateJPEG);
