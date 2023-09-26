@@ -3,42 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dairy Store Billing App</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Bill Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .total-row {
+            font-weight: bold;
+        }
+    
+    </style>
 </head>
 <body>
-    <h1>Dairy Store Billing App</h1>
-    <form id="billingForm">
-        <label for="date">Date:</label>
-        <input type="date" id="date" required><br>
+    <div class="container">
+        <h1>Bill Generator</h1>
+        <form id="bill-form">
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="text" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>MRP</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bill-items">
+                        <!-- Table rows will be added dynamically -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="3">Total</td>
+                            <td id="total-amount">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <button type="button" id="add-item">Add Item</button>
+            <button type="submit" id="generate-bill">Generate Bill</button>
+        </form>
+    </div>
 
-        <label for="name">Name:</label>
-        <input type="text" id="name" required><br>
+    <script>// Sample JSON data (replace this with your actual data)
+        const productsJson = [
+            { "name": "Nandini 500 ml", "mrp": 44 },
+            { "name": "Nandini 1000 ml", "mrp": 42 },
+            { "name": "Nandini Shubham", "mrp": 50 },
+            { "name": "Nandini Special", "mrp": 50 },
+            { "name": "Curd 200 g", "mrp": 12 },
+            { "name": "Curd 500 g", "mrp": 26 }
+        ];
+        
+        // Function to add a new row to the table
+        function addTableRow() {
+            const row = document.createElement("tr");
+            const productCell = document.createElement("td");
+            const mrpCell = document.createElement("td");
+            const quantityCell = document.createElement("td");
+            const amountCell = document.createElement("td");
+            const removeButtonCell = document.createElement("td");
+        
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.addEventListener("click", () => {
+                row.remove();
+                calculateTotalAmount();
+            });
+        
+            quantityCell.innerHTML = '<input type="number" class="quantity" min="1" value="1">';
+            amountCell.textContent = "0.00";
+            amountCell.classList.add("amount");
+        
+            // Populate the "Product" column with a dropdown of product names
+            const productSelect = document.createElement("select");
+            productsJson.forEach((product) => {
+                const option = document.createElement("option");
+                option.value = product.name;
+                option.text = product.name;
+                productSelect.appendChild(option);
+            });
+            productCell.appendChild(productSelect);
+        
+            // Populate the "MRP" column with MRP values based on the selected product
+            productSelect.addEventListener("change", () => {
+                const selectedProductName = productSelect.value;
+                const selectedProduct = productsJson.find((product) => product.name === selectedProductName);
+                const selectedMRP = selectedProduct ? selectedProduct.mrp : 0;
+                mrpCell.textContent = selectedMRP.toFixed(2);
+                calculateAmount();
+            });
+        
+            // Calculate "Amount" based on "MRP" and "Quantity"
+            function calculateAmount() {
+                const selectedMRP = parseFloat(mrpCell.textContent);
+                const selectedQuantity = parseFloat(quantityCell.querySelector(".quantity").value);
+                const calculatedAmount = selectedMRP * selectedQuantity;
+                amountCell.textContent = calculatedAmount.toFixed(2);
+                calculateTotalAmount();
+            }
+        
+            // Add an event listener to the quantity input for live calculation
+            quantityCell.querySelector(".quantity").addEventListener("input", calculateAmount);
+        
+            productCell.classList.add("product-cell");
+            mrpCell.classList.add("mrp-cell");
+            quantityCell.classList.add("quantity-cell");
+            amountCell.classList.add("amount-cell");
+            removeButtonCell.classList.add("remove-button-cell");
+        
+            removeButtonCell.appendChild(removeButton);
+        
+            row.appendChild(productCell);
+            row.appendChild(mrpCell);
+            row.appendChild(quantityCell);
+            row.appendChild(amountCell);
+            row.appendChild(removeButtonCell);
+        
+            document.getElementById("bill-items").appendChild(row);
+        
+            // Update the total amount when a new row is added
+            calculateTotalAmount();
+        }
+        
+        // Function to calculate and update total amount
+        function calculateTotalAmount() {
+            const amountElements = document.querySelectorAll(".amount");
+            let totalAmount = 0;
+            amountElements.forEach((element) => {
+                totalAmount += parseFloat(element.textContent);
+            });
+            document.getElementById("total-amount").textContent = totalAmount.toFixed(2);
+        }
+        
+        // Handle form submission
+        document.getElementById("bill-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            // Process the form data, generate the bill, etc.
+            alert("Bill generated successfully!");
+        });
+        
+        // Add item button click event
+        document.getElementById("add-item").addEventListener("click", addTableRow);
+        
+        // Generate and download the PDF
+        function generatePDF() {
+            const date = document.getElementById("date").value;
+            const name = document.getElementById("name").value;
 
-        <label for="item">Number of Items Purchased:</label>
-        <input type="number" id="item" required><br>
+            // Create a new jsPDF instance
+            const doc = new jsPDF();
 
-        <button type="button" onclick="calculateBill()">Calculate Bill</button>
-    </form>
+            // Add content to the PDF
+            doc.text("Bill Details", 10, 10);
+            doc.text(`Date: ${date}`, 10, 20);
+            doc.text(`Name: ${name}`, 10, 30);
 
-    <h2>Bill Details</h2>
-    <table id="billTable">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>MRP</th>
-                <th>Quantity</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Bill details will be displayed here -->
-        </tbody>
-    </table>
+            // Create a table to add product details
+            const tableData = [];
+            tableData.push(["Product", "MRP", "Quantity", "Amount"]);
 
-    <button id="downloadButton">Download PDF</button>
+            const rows = document.querySelectorAll("#bill-items tr");
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll("td");
+                const rowData = [];
+                cells.forEach((cell) => {
+                    rowData.push(cell.textContent);
+                });
+                tableData.push(rowData);
+            });
 
-    <script src="script.js"></script>
+            doc.autoTable({
+                startY: 40,
+                head: tableData.slice(0, 1),
+                body: tableData.slice(1),
+            });
+
+            // Calculate and add the total amount
+            const totalAmount = document.getElementById("total-amount").textContent;
+            doc.text(`Total Amount: ${totalAmount}`, 10, doc.autoTable.previous.finalY + 10);
+
+            // Save the PDF with a filename based on Name and Date
+            const filename = `${name}_${date}.pdf`;
+            doc.save(filename);
+        }
+
+        // Add item button click event
+        document.getElementById("add-item").addEventListener("click", addTableRow);
+    </script>
 </body>
 </html>
