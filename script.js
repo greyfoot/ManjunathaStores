@@ -2,10 +2,13 @@
 const productsJson = [
     { "name": "Nandini 500 ml", "mrp": 44 },
     { "name": "Nandini 1000 ml", "mrp": 42 },
-    { "name": "Nandini Shubham", "mrp": 50 },
-    { "name": "Nandini Special", "mrp": 50 },
+    { "name": "Shubham 500 ml", "mrp": 50 },
+    { "name": "Shubham 1000 ml", "mrp": 48 },
+    { "name": "Special 500 ml", "mrp": 50 },
+    { "name": "Special 1000 ml", "mrp": 48 },
     { "name": "Curd 200 g", "mrp": 12 },
-    { "name": "Curd 500 g", "mrp": 26 }
+    { "name": "Curd 500 g", "mrp": 26 },
+    { "name": "Curd 1000 g", "mrp": 50 }
 ];
 
 // Function to add a new row to the table
