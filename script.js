@@ -8,7 +8,8 @@ const productsJson = [
     { "name": "Special 1000 ml", "mrp": 48 },
     { "name": "Curd 200 g", "mrp": 12 },
     { "name": "Curd 500 g", "mrp": 26 },
-    { "name": "Curd 1000 g", "mrp": 50 }
+    { "name": "Curd 1000 g", "mrp": 50 },
+    { "name": "Service Charge", "mrp": 1 }
 ];
 
 // Function to add a new row to the table
