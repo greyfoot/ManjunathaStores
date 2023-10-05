@@ -107,9 +107,9 @@ function generateJPEG(event) {
     const name = document.getElementById("name").value;
 
     // Capture the HTML content as an image using html2canvas
-    const captureDiv = document.querySelector(".container");
+    const form = document.getElementById("bill-form");
 
-    html2canvas(captureDiv).then(function (canvas) {
+    html2canvas(form).then(function (canvas) {
         // Convert the canvas to a data URL
         const dataUrl = canvas.toDataURL("image/jpeg");
 
