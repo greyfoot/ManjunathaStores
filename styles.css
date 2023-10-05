@@ -21,6 +21,42 @@ h1 {
 form {
     display: flex;
     flex-direction: column;
+    padding-left: 10px;
+    padding-right: 2px;
+    background-color: #f5f5f5; /* Add a light gray background color */
+    border: 1px solid #ddd; /* Add a subtle border */
+    border-radius: 5px; /* Add rounded corners */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+}
+
+/* Style input fields and labels for a cleaner look */
+form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="date"] {
+    padding: 2px;
+    margin-bottom: 2px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+/* Style buttons if there are any */
+form button {
+    background-color: #007bff; /* Blue button color */
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Add some spacing between elements */
+form > * {
+    margin: 5px 0;
 }
 
 .form-group {
@@ -33,6 +69,11 @@ form {
 
 .table-container {
     overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
 table {
